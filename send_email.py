@@ -12,7 +12,7 @@ def generate_email(csvfile,recv):
 
     sender_email = "chetantayal.cs17@rvce.edu.in"
     reciever_email = recv
-    password = "iamaboy3801"
+    password = ""
 
     message = MIMEMultipart()
     message['From'] = sender_email
