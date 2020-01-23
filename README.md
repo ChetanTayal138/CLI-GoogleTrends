@@ -8,4 +8,4 @@ https://github.com/GeneralMills/pytrends
 # USAGE
 
 ## If file present
-'<python3 get_csv.py --filename keywords.txt reciever_email --download True>'
+    python3 get_csv.py --filename keywords.txt reciever_email --download True
