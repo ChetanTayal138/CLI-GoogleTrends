@@ -82,17 +82,23 @@ def main():
     parser,args = generate_parser()
     PyTrends = TrendReq(hl = 'en-US', tz=360)
     lists = read_keywords(args.filename)   
-    DF = pd.DataFrame()
+    DF = pd.DataFrame(columns=['date'])
 
     if args.timezone == None:
         if len(lists) > 5:
             wordset = generate_wordsets(lists)
             for listset in wordset:
+                i = 0
                 PyTrends.build_payload(listset,cat=0,timeframe="today 5-y",geo=args.location,gprop='')
                 df = PyTrends.interest_over_time()
-                #df = df.iloc[:,:,-1]
-                print(df.head())
-                DF = DF.append(df,ignore_index=False,sort=False)
+                df = df.iloc[:,:-1]
+                df.to_csv(f"csvfiles/lol{i}.csv")
+                i = i + 1
+                
+                df = df.reset_index()
+                DF = pd.merge(DF,df,on='date',how='outer')
+                
+                
             
                 
 
@@ -103,16 +109,16 @@ def main():
         PyTrends.build_payload(lists, cat=0, timeframe=args.timezone, geo=args.location, gprop='')
                                                                                         
     
-    #df = PyTrends.interest_over_time()
-    #df = df.iloc[:,:-1]
+    
+    
     today = date.today()
-    print(DF.head())
+    
     if(args.download):
         print("Generating CSV File")
         filename = "interest_over_time_" + str(today) + ".csv"
         DF.to_csv(filename)
         print("Sending Email")
-        #generate_email(filename, args.email_id)
+        generate_email(filename, args.email_id)
 
 
         
