@@ -3,7 +3,7 @@ from pytrends.request import TrendReq
 from datetime import date
 from send_email import generate_email 
 import math
-
+import pandas as pd 
 
 
 def generate_parser():
@@ -36,10 +36,10 @@ def read_file(filename):
 
 
 
-def read_keywords():
+def read_keywords(filename):
     lists = []
-    if(args.filename):
-        lists = read_file(args.filename)
+    if(filename):
+        lists = read_file(filename)
 
     else:
         kw_list = [args.kw1,args.kw2,args.kw3,args.kw4,args.kw5]
@@ -54,13 +54,26 @@ def read_keywords():
 
 
 def generate_wordsets(lists):
+    
 
     num_groups = int(math.ceil(len(lists)/5)) #Since Google Trends supports a maximum of 5 keywords to be searched at a time
     groups = []
     for i in range(num_groups):
         groups.append([])
+    
+    count = 0 
+    j = 0
 
-    print(groups)    
+    for word in lists:
+        groups[count].append(word)
+        j = j + 1 
+        if(j==5):
+            count = count + 1 
+            j = 0 
+
+    return groups
+
+
 
 
 
@@ -68,12 +81,21 @@ def generate_wordsets(lists):
 def main():
     parser,args = generate_parser()
     PyTrends = TrendReq(hl = 'en-US', tz=360)
-    lists = read_keywords()   
+    lists = read_keywords(args.filename)   
+    DF = pd.DataFrame()
+
     if args.timezone == None:
         if len(lists) > 5:
             wordset = generate_wordsets(lists)
             for listset in wordset:
                 PyTrends.build_payload(listset,cat=0,timeframe="today 5-y",geo=args.location,gprop='')
+                df = PyTrends.interest_over_time()
+                #df = df.iloc[:,:,-1]
+                print(df.head())
+                DF = DF.append(df,ignore_index=False,sort=False)
+            
+                
+
         else:
             PyTrends.build_payload(lists,cat=0,timeframe="today 5-y", geo=args.location,gprop='')
 
@@ -81,22 +103,23 @@ def main():
         PyTrends.build_payload(lists, cat=0, timeframe=args.timezone, geo=args.location, gprop='')
                                                                                         
     
-    df = PyTrends.interest_over_time()
-    df = df.iloc[:,:-1]
+    #df = PyTrends.interest_over_time()
+    #df = df.iloc[:,:-1]
     today = date.today()
+    print(DF.head())
     if(args.download):
         print("Generating CSV File")
         filename = "interest_over_time_" + str(today) + ".csv"
-        df.to_csv(filename)
+        DF.to_csv(filename)
         print("Sending Email")
-        generate_email(filename, args.email_id)
+        #generate_email(filename, args.email_id)
 
 
         
 
         
 if __name__ == "__main__":
-    #main()
-    words = read_file("keywords.txt")
-    print(words)
+    main()
+    #words = read_file("keywords.txt")
+    #generate_wordsets(words)
 
