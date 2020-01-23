@@ -7,7 +7,7 @@ https://github.com/GeneralMills/pytrends
 
 ## USAGE
 
-### If file present
+### Using a text file containing the keywords
     python3 get_csv.py --filename keywords.txt --download True reciever_email
     
 ### Using only keywords 
