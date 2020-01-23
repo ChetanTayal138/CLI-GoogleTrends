@@ -5,7 +5,7 @@ Command Line Interface built on top of PyTrends, a pseudo-API for obtaining data
 https://github.com/GeneralMills/pytrends
 
 
-#USAGE
+# USAGE
 
 ## If file present
-<python3 get_csv.py --filename keywords.txt reciever_email --download True>
+'<python3 get_csv.py --filename keywords.txt reciever_email --download True>'
