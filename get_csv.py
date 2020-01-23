@@ -91,10 +91,14 @@ def main():
                 i = 0
                 PyTrends.build_payload(listset,cat=0,timeframe="today 5-y",geo=args.location,gprop='')
                 df = PyTrends.interest_over_time()
+<<<<<<< HEAD
                 df = df.iloc[:,:-1]
                 
                 
                 
+=======
+                df = df.iloc[:,:-1]      
+>>>>>>> f9782df47ee3e23db4112368149bb8fc24dd064e
                 df = df.reset_index()
                 DF = pd.merge(DF,df,on='date',how='outer')
                 
@@ -126,6 +130,5 @@ def main():
         
 if __name__ == "__main__":
     main()
-    #words = read_file("keywords.txt")
-    #generate_wordsets(words)
+   
 
