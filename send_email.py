@@ -12,14 +12,15 @@ def generate_email(csvfile,recv):
 
     sender_email = "chetantayal.cs17@rvce.edu.in"
     reciever_email = recv
-    password = ""
+    password = "iamaboy3801"
 
     message = MIMEMultipart()
     message['From'] = sender_email
     message['To'] = reciever_email
-    message['Subject'] = 'CSV FILE FOR INTERESTS OVER TIME'
+    message['Subject'] = 'CSV FILE'
     today = datetime.date.today()
     body = "DATED FOR " + str(today)
+
     
     
     message.attach(MIMEText(body,'plain'))

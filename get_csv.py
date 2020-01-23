@@ -2,6 +2,7 @@ import argparse
 from pytrends.request import TrendReq
 from datetime import date
 from send_email import generate_email 
+import math
 
 
 
@@ -12,8 +13,9 @@ def generate_parser():
     parser.add_argument("--kw3" , help = "Third Interest")
     parser.add_argument("--kw4" , help = "Fourth Interest")
     parser.add_argument("--kw5" , help = "Fifth Interest")
+    parser.add_argument("--filename" , help = "File containing names of keywords")
     parser.add_argument("--location", help = "Location of interest. IN- India, Defaults to Worldwide")
-    parser.add_argument("--timezone" , help = "timeframe for data. -all : all time data, defaults to 5 years")
+    parser.add_argument("--timezone" , help = "Data timeframe. all : all time data, defaults to 5 years")
     parser.add_argument("--download" , help = "set to true to download csv file")
     parser.add_argument("email_id" , help = "Recipients Email ID")
     args = parser.parse_args()
@@ -21,17 +23,60 @@ def generate_parser():
     return parser,args
 
 
+
+def read_file(filename):
+    keywords = []
+    f = open(filename, "r")
+    for line in f:
+        line = line.strip('\n')
+        keywords.append(line)
+
+    return keywords
+
+
+
+
+def read_keywords():
+    lists = []
+    if(args.filename):
+        lists = read_file(args.filename)
+
+    else:
+        kw_list = [args.kw1,args.kw2,args.kw3,args.kw4,args.kw5]
+        for key in kw_list:
+            if key is not None:
+                lists.append(key)
+
+    return lists 
+
+
+
+
+
+def generate_wordsets(lists):
+
+    num_groups = int(math.ceil(len(lists)/5)) #Since Google Trends supports a maximum of 5 keywords to be searched at a time
+    groups = []
+    for i in range(num_groups):
+        groups.append([])
+
+    print(groups)    
+
+
+
+
 def main():
     parser,args = generate_parser()
-    PyTrends = TrendReq(hl = 'en-US',tz=360)
-    lists = []
-    kw_list = [args.kw1,args.kw2,args.kw3,args.kw4,args.kw5]
-    for key in kw_list:
-        if key is not None:
-            lists.append(key)
-    
+    PyTrends = TrendReq(hl = 'en-US', tz=360)
+    lists = read_keywords()   
     if args.timezone == None:
-        PyTrends.build_payload(lists,cat=0,timeframe="today 5-y",geo=args.location,gprop='')
+        if len(lists) > 5:
+            wordset = generate_wordsets(lists)
+            for listset in wordset:
+                PyTrends.build_payload(listset,cat=0,timeframe="today 5-y",geo=args.location,gprop='')
+        else:
+            PyTrends.build_payload(lists,cat=0,timeframe="today 5-y", geo=args.location,gprop='')
+
     else:
         PyTrends.build_payload(lists, cat=0, timeframe=args.timezone, geo=args.location, gprop='')
                                                                                         
@@ -51,5 +96,7 @@ def main():
 
         
 if __name__ == "__main__":
-    main()
+    #main()
+    words = read_file("keywords.txt")
+    print(words)
 
