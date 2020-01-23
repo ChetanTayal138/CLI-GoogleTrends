@@ -8,7 +8,7 @@ https://github.com/GeneralMills/pytrends
 ## USAGE
 
 ### If file present
-    python3 get_csv.py --filename keywords.txt reciever_email --download True
+    python3 get_csv.py --filename keywords.txt --download True reciever_email
     
 ### Using only keywords 
-    python3 get_csv.py --kw1 keyword_one --kw2 --keyword_two reciever_email --download True
+    python3 get_csv.py --kw1 keyword_one --kw2 --keyword_two --download True reciever_email
