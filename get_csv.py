@@ -92,8 +92,8 @@ def main():
                 PyTrends.build_payload(listset,cat=0,timeframe="today 5-y",geo=args.location,gprop='')
                 df = PyTrends.interest_over_time()
                 df = df.iloc[:,:-1]
-                df.to_csv(f"csvfiles/lol{i}.csv")
-                i = i + 1
+                
+                
                 
                 df = df.reset_index()
                 DF = pd.merge(DF,df,on='date',how='outer')
@@ -115,7 +115,7 @@ def main():
     
     if(args.download):
         print("Generating CSV File")
-        filename = "interest_over_time_" + str(today) + ".csv"
+        filename = "csvfiles/interest_over_time_" + str(today) + ".csv"
         DF.to_csv(filename)
         print("Sending Email")
         generate_email(filename, args.email_id)
